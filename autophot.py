@@ -8,7 +8,7 @@ import scipy.optimize as opt
 
 
 
-def phot(file, path, gain, readnoise, ra = 0, dec = 0,range = 50, annulus = [150,3], forceAperture  = 0, boxsize = 300, plot = 0, fitgauss = True):
+def phot(file, path, gain, readnoise, ra = 0, dec = 0,range = 50, annulus = [150,3], forceAperture  = 0, boxsize = 300, plot = False, fitgauss = True):
     '''
     autophot.phot
     
@@ -18,23 +18,28 @@ def phot(file, path, gain, readnoise, ra = 0, dec = 0,range = 50, annulus = [150
     !!!!!IMPORTANT!!!!!
     
     PURPOSE: Performs aperture photometry with support from astrometry.net on a point source given RA and Dec
-    
+             If forceAperture is not used, the code will do a SNR calculation and use an aperture radius that gives the optimal SNR
     INPUT:
         file: [string] Contains the file name
-        path: [string] path to said file
-    
+        path: [string] Path to said file
+        gain: [float] Gain of the CCD 
+        readnoise: [float] Readnoise of the CCD, (e-)
+        
     OPTIONAL INPUTS:
-        ra: [float] right ascension of target, given in fractional hours
-        dec: [float] declination of target, given in fractional degrees
-        range: [integer] largest possible aperture radius in pixels, default is 20 pixels
+        ra: [float] Right ascension of target, given in fractional hours
+        dec: [float] Declination of target, given in fractional degrees
+        range: [integer] Largest possible aperture radius in pixels, default is 50 pixels
+        annulus: [2 element floatarr] Inner radius and width of the annulus used for sky subtraction + SNR 
         forceAperture: [integer] Force the code to use a specific aperture (in pixels)
-        boxsize: [integer] length of one of the sides of the box that will be trimmed from the whole image for photometry
+        boxsize: [integer] Length of one of the sides of the box that will be trimmed from the whole image for photometry
                  Should be larger than range
-        manual: [boolean] Turn this on 
+        manual: [boolean] Turn this on to do manual selection of targets
+        plot: [boolean] Turn this on to enable images of the target and the plot of SNR vs. Radius, Default is False
+        fitgauss: [boolean] If this is on, target will be fit with a gaussian to better estimate the center of the source. Default is True
+                 NOTE: For dim targets near brighter targets this may fail!
     
     OUTPUT:
         Array containing the flux in e- and the optimum aperture radius if the forceAperture keyword is not used
-    
     
     NOTES:
         The manual clicks generate some text. Does not seem cause any issues.
@@ -43,6 +48,7 @@ def phot(file, path, gain, readnoise, ra = 0, dec = 0,range = 50, annulus = [150
     
     1) Add a way to check that you're only getting counts from a single star
          (Kind of already done? If you're worried about this, turn plot on)
+    2) Plot the actual aperture + annulus when plot is turned on. Currently just plots a symbol
     
     '''
 
